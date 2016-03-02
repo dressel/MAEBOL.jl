@@ -2,6 +2,8 @@
 Here I consider searching for a single, stationary jammer using multiple vehicles with a bearing-only sensing modality.
 I use the ergodic control framework presented in [1],[2].
 
+This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work at all at any time.
+
 ## Search Domain
 I use a `SearchDomain` type to characterize the search region in which the jammer might lie.
 
