@@ -23,6 +23,11 @@ D-optimality is often used to convert the EIM into EID: EID(x) = det(Phi(x))
 * `EID(m::SearchDomain, b::Belief)` generates EID matrix over domain.
 * `EID(m::SearchDomain, theta_x, theta_y)` finds EID at a specific jammer location.
 
+## Fourier Decomposition
+In order to perform ergodic control, the EID needs to be broken down into Fourier coefficients.
+
+`phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)` finds the `k`th coefficient of the EDI represented with `phi`.
+
 ## Sources
 
 1. Y. Silverman, L. M. Miller, M. A. MacIver and T. D. Murphey, "Optimal planning for information acquisition," Intelligent Robots and Systems (IROS), 2013 IEEE/RSJ International Conference on, Tokyo, 2013, pp. 5974-5980.

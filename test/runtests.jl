@@ -6,7 +6,7 @@ using Base.Test
 
 # Testing the coefficients
 m = SearchDomain(9)
-@assert hk(m, 0) == 9.0
-@assert hk(m, 1) == 4.5
-@assert hk(m, 2) == 4.5
-@assert hk(m, 3) == 4.5
+@assert h_ij(0, 0, 9) == 9.0
+@assert h_ij(1, 1, 9) == 4.5
+@assert h_ij(2, 2, 9) == 4.5
+@assert h_ij(3, 3, 9) == 4.5

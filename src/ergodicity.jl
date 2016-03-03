@@ -3,118 +3,64 @@
 # Handles the stuff needed for ergodicity
 ######################################################################
 
-"""
-`fisher(m::SearchDomain)`
+# TODO: need initial robot positions to initialize ck
+type ErgodicManager
+	K::Int
+	L::Int
+	Gamma::Matrix{Float64}
+	h::Matrix{Float64}
+	phik::Matrix{Float64}
+	ck::Matrix{Float64}
 
-Creates the Fisher information matrix. Vehicle positions are discretized to same level as possible jammer locations.
-"""
-function fisher(m::SearchDomain)
-	# TODO: multiply by measurement noise
-	# TODO: what do we do about rad2deg business? Multiply by constant?
-	# TODO: what do we do about xr = yr = 0??
-	n = m.num_cells
-	F = zeros(n, n, n, n, 2, 2)
+	function ErgodicManager(K::Int, L::Int)
+		# create data structures
+		Gamma = zeros(K+1, K+1)
+		h = zeros(K+1, K+1)
+		phik = zeros(K+1, K+1)
+		ck = zeros(K+1, K+1)
 
-	for vx = 1:n
-		for vy = 1:n
-			for theta_x = 1:n
-				for theta_y = 1:n
-					# Create the 2x2 matrix
-					xr = theta_x - vx
-					yr = theta_y - vy
-					if xr == 0 && yr == 0
-						xr = 1e-6
-						yr = 1e-6
-					end
-					den = (xr^2 + yr^2)^2
-					F[vx,vy,theta_x,theta_y,1,1] = -2*yr*xr / den
-					F[vx,vy,theta_x,theta_y,2,2] = 2*yr*xr / den
-					F[vx,vy,theta_x,theta_y,1,2] = (xr^2 - yr^2) / den
-					F[vx,vy,theta_x,theta_y,2,1] = (xr^2 - yr^2) / den
-				end
+		pil2 = pi * pi / (L * L)
+		for k1 = 0:K
+			for k2 = 0:K
+				Gamma[k1+1, k2+1] = 1 / ( (1 + pil2*(k1*k1 + k2*k2))^1.5 )
+				h[k1+1, k2+1] = h_ij(k1, k2, L)
 			end
 		end
+		return new(K, L, Gamma, h, phik, ck)
 	end
-	return F
 end
 
-
 """
-`EID(m::SearchDomain, b::Belief)`
+`fk(em, k1, k2, x1, x2)`
 
 Arguments:
 
-* `m` is the search domain
-* `b` is the belief
+* `em` = ergodic manager
+* `k1, k2` = coefficients (0-indexed)
+* `x1, x2` = vehicle location
 
-Returns the expected information density.
 """
-function EID(m::SearchDomain, b::Belief)
-	n = m.num_cells
-	F = m.F
-	ei = zeros(n, n, 2, 2)
-	eid = zeros(n, n)
-	for vx = 1:n
-		for vy = 1:n
-			for theta_x = 1:n
-				for theta_y = 1:n
-					p = b[theta_x, theta_y]
-					ei[vx, vy, 1, 1] += F[vx, vy, theta_x, theta_y,1,1] * p
-					ei[vx, vy, 2, 1] += F[vx, vy, theta_x, theta_y,2,1] * p
-					ei[vx, vy, 1, 2] += F[vx, vy, theta_x, theta_y,1,2] * p
-					ei[vx, vy, 2, 2] += F[vx, vy, theta_x, theta_y,2,2] * p
-				end
-			end
-			ma = ei[vx, vy, 1, 1]
-			mb = ei[vx, vy, 2, 1]
-			mc = ei[vx, vy, 1, 2]
-			md = ei[vx, vy, 2, 2]
-			eid[vx, vy] = ma*md - mb*mc
-		end
-	end
-	return eid
+function fk(em::ErgodicManager, k1::Int, k2::Int, x1, x2)
+	return cos(k1*pi*x1/em.L) * cos(k2*pi*x2/em.L) / em.h[k1+1, k2+1]
 end
 
-"""
-`EID(m::SearchDomain, theta_x::Int64, theta_y::Int64)`
-
-Arguments:
-
-* `m` is the search domain
-* `(theta_x, theta_y)` is the jammer location (0-indexed)
-
-Returns the expected information density.
-"""
-function EID(m::SearchDomain, theta_x::Int, theta_y::Int)
-	n = m.num_cells
-	F = m.F
-	eid = zeros(n, n)
-	for vx = 1:n
-		for vy = 1:n
-			ma = F[vx, vy, theta_x+1, theta_y+1, 1, 1]
-			mb = F[vx, vy, theta_x+1, theta_y+1, 1, 2]
-			mc = F[vx, vy, theta_x+1, theta_y+1, 2, 1]
-			md = F[vx, vy, theta_x+1, theta_y+1, 2, 2]
-
-			eid[vx, vy] = ma*md - mb*mc
-		end
-	end
-	return eid
+function rar()
 end
 
 
 """
-`hk(m::SearchDomain, k::Int)`
+`h_ij(k1::Int, k2::Int, L::Int)`
+
+`L` is size of search domain.
 """
-function hk(m::SearchDomain, k::Int)
+function h_ij(k1::Int, k2::Int, L::Int)
 	# Limits
-	L = m.num_cells
 	xmin = (0.,0.)
 	xmax = (L, L)
 
 	# make integrand
 	function h_int(x)
-		cos(k*pi*x[1]/L)^2 * cos(k*pi*x[2]/L)^2
+		cos(k1*pi*x[1]/L)^2 * cos(k2*pi*x[2]/L)^2
 	end
 
 	return sqrt(hcubature(h_int, xmin, xmax)[1])
@@ -133,16 +79,16 @@ function hk2(m::SearchDomain, k::Int)
 end
 
 """
-`phik(m::SearchDomain, phi, k::Int)`
+`phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)`
 
 Currently performs a rough numerical integration.
 """
-function phik(m::SearchDomain, phi, k::Int)
+function phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)
 	L = m.num_cells
 	phiksum = 0.0
 	for x1 = 1:L
 		for x2 = 1:L
-			phiksum += phi(x1, x2) * cos(k*pi*(x1-.5)/L)*cos(k*pi*(x2-.5)/L)
+			phiksum += phi[x1, x2] * cos(k*pi*(x1-.5)/L)*cos(k*pi*(x2-.5)/L)
 		end
 	end
 	return phiksum / hk(m, k)
