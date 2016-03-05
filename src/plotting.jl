@@ -3,11 +3,11 @@
 # Handles all the calls to PyPlot to generate plots
 ######################################################################
 
-function plot_world(m, b, x, theta)
+function plot_world(m::SearchDomain, X::VehicleSet)
 	mark_size = 12
-	plot(x[1], x[2], "b*", markersize=mark_size)
-	plot(theta[1], theta[2], "r^", markersize=mark_size)
-	imshow(b', interpolation="none", cmap="Greys", origin="lower")
+	plot(X[1].x, X[1].y, "b*", markersize=mark_size)
+	plot(m.theta[1], m.theta[2], "r^", markersize=mark_size)
+	imshow(m.b', interpolation="none", cmap="Greys", origin="lower")
 	xlabel("x")
 	ylabel("y")
 	#imshow(b_plot, cmap="Greys")

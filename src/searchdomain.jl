@@ -1,3 +1,7 @@
+######################################################################
+# searchdomain.jl
+# Contains search domain type
+######################################################################
 type SearchDomain
 	cell_size::Int64		# side of one grid cell, in meters
 	num_cells::Int64		# number of cells per side
@@ -6,8 +10,10 @@ type SearchDomain
 	noise_sigma::Float64  # std deviation of noise, degrees
 	d::Normal
 	F						# fisher information stuff
+	b::Belief
+	theta::NTuple{2, Int}
 
-	function SearchDomain(num_cells::Int64)
+	function SearchDomain(num_cells::Int64, theta_x::Int, theta_y::Int)
 		m = new()
 		m.cell_size = 1
 		m.num_cells = num_cells
@@ -16,8 +22,14 @@ type SearchDomain
 		m.noise_sigma = 10.0
 		m.d = Normal(0, m.noise_sigma)
 		m.F = fisher(m)
+		m.b = ones(num_cells, num_cells) / (num_cells * num_cells)
+		m.theta = (theta_x, theta_y)
 		return m
 	end
+	function SearchDomain(num_cells::Int64)
+		return SearchDomain(num_cells, num_cells-1, num_cells-1)
+	end
+
 end
 
 """
@@ -33,20 +45,22 @@ Arguments:
 
 * `m` is search domain
 * `xp` is vehicle state
-* `b` is belief matrix
 * `o` is observation
 
 Returns an updated belief matrix.
 """
-function update_belief(m::SearchDomain, xp, b::Belief, o::Obs)
+function update_belief(m::SearchDomain, X::VehicleSet, Z::Vector{Obs})
 	bp = zeros(m.num_cells, m.num_cells)		# create bp
 
 	# Loop over all possible jammer positions
 	bp_sum = 0.0
 	for theta_x = 1:m.num_cells
 		for theta_y = 1:m.num_cells
-			temp_val = O(m, xp, (theta_x-1,theta_y-1), o) * b[theta_x,theta_y]
-			bp[theta_x, theta_y] = temp_val
+			temp_val = m.b[theta_x, theta_y]
+			for (i,xi) in enumerate(X)
+				temp_val *= O(m, xi, (theta_x-1,theta_y-1), Z[i])
+			end
+			m.b[theta_x, theta_y] = temp_val
 			bp_sum += temp_val
 		end
 	end
@@ -59,4 +73,11 @@ function update_belief(m::SearchDomain, xp, b::Belief, o::Obs)
 	end
 
 	return bp
+end
+
+# allows you to initialize vehicle set
+# Assumes there is an odd number of cells
+function Vehicle(m::SearchDomain)
+	mid_cell = (m.num_cells-1) / 2
+	return Vehicle(mid_cell, mid_cell)
 end

@@ -5,19 +5,21 @@
 ######################################################################
 
 """
-`O(m::SearchDomain, xp, theta, o::Obs)`
+`O(m::SearchDomain, x::Vehicle, theta, o::Obs)`
 
 Arguments:
 
- * `xp` is (xv, yv), a tuple of doubles
- * `theta` is (theta_x, theta_y), a tuple of ints
+ * `m` is a `SearchDomain`
+ * `x` is a `Vehicle`
+ * `theta` is a possible jammer location
  * `o` is an observation, 0 to 35
 
 Returns probability of observing `o` from `(xp, theta)` in domain `m`.
 """
-function O(m::SearchDomain, xp, theta, o::Obs)
+function O(m::SearchDomain, x::Vehicle, theta, o::Obs)
 
 	# Calculate true bearing, and find distance to bin edges
+	xp = (x.x, x.y)
 	ang_deg = true_bearing(xp, theta)
 	rel_start, rel_end = rel_bin_edges(ang_deg, o)
 
@@ -28,14 +30,22 @@ function O(m::SearchDomain, xp, theta, o::Obs)
 end
 
 """
-Samples an observation
+`observe(m::SearchDomain, X::VehicleSet)`
+
+Returns a set of possible observations for vehicles in set `X`.
+	The output is a vector of observations, one per vehicle.
 """
-function observe(m::SearchDomain, xp, theta)
-	obs_probs = Array(Float64, 0)
-	for o in 0:35
-		push!(obs_probs, O(m, xp, theta, o))
+function observe(m::SearchDomain, X::VehicleSet)
+	n = length(X)
+	Z = Array(Obs, 0)
+	for xi in X
+		obs_probs = Array(Float64, 0)
+		for o in 0:35
+			push!(obs_probs, O(m, xi, m.theta, o))
+		end
+		push!(Z, sample(0:35, WeightVec(obs_probs)))
 	end
-	return sample(0:35, WeightVec(obs_probs))
+	return Z
 end
 
 
