@@ -1,6 +1,6 @@
 # MAEBOL (Multi-agent, ergodic, bearing-only localization)
 Here I consider searching for a single, stationary jammer using multiple vehicles with a bearing-only sensing modality.
-I use the ergodic control framework presented in [1],[2].
+I use the ergodic control framework presented in [1] as well as that presented in [2],[3].
 
 This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work at all at any time.
 
@@ -30,7 +30,8 @@ In order to perform ergodic control, the EID needs to be broken down into Fourie
 
 ## Sources
 
-1. Y. Silverman, L. M. Miller, M. A. MacIver and T. D. Murphey, "Optimal planning for information acquisition," Intelligent Robots and Systems (IROS), 2013 IEEE/RSJ International Conference on, Tokyo, 2013, pp. 5974-5980.
-2. L. M. Miller and T. D. Murphey, "Optimal planning for target localization and coverage using range sensing," Automation Science and Engineering (CASE), 2015 IEEE International Conference on, Gothenburg, 2015, pp. 501-508.
+1. George Mathew, Igor Mezić, Metrics for ergodicity and design of ergodic dynamics for multi-agent systems, Physica D: Nonlinear Phenomena, Volume 240, Issues 4–5, 15 February 2011, Pages 432-442, ISSN 0167-2789, http://dx.doi.org/10.1016/j.physd.2010.10.010.
+2. Y. Silverman, L. M. Miller, M. A. MacIver and T. D. Murphey, "Optimal planning for information acquisition," Intelligent Robots and Systems (IROS), 2013 IEEE/RSJ International Conference on, Tokyo, 2013, pp. 5974-5980.
+3. L. M. Miller and T. D. Murphey, "Optimal planning for target localization and coverage using range sensing," Automation Science and Engineering (CASE), 2015 IEEE International Conference on, Gothenburg, 2015, pp. 501-508.
 
 [![Build Status](https://travis-ci.org/dressel/MAEBOL.jl.svg?branch=master)](https://travis-ci.org/dressel/MAEBOL.jl)
