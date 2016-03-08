@@ -4,13 +4,28 @@
 ######################################################################
 
 function plot_world(m::SearchDomain, X::VehicleSet)
+	plot_world(m.b, X, m.theta)
+end
+
+function plot_world(b::Belief, X::VehicleSet, theta::NTuple{2,Int})
+	#figure()
 	mark_size = 12
-	plot(X[1].x, X[1].y, "b*", markersize=mark_size)
-	plot(m.theta[1], m.theta[2], "r^", markersize=mark_size)
-	imshow(m.b', interpolation="none", cmap="Greys", origin="lower")
+	plot(theta[1], theta[2], "r^", markersize=mark_size)
+	hold(true)
+	for xi in X
+		plot(xi.x, xi.y, "b*", markersize=mark_size)
+	end
+	imshow(b', interpolation="none", cmap="Greys", origin="lower")
 	xlabel("x")
 	ylabel("y")
-	#imshow(b_plot, cmap="Greys")
+end
+
+function plot_sim(m::SearchDomain, s::Simulation)
+	for t = 0:s.T
+		hold(false)
+		pause(1)
+		plot_world(s.belief_list[t+1], s.state_list[t+1], m.theta)
+	end
 end
 
 function plot_eid(m, b, x, theta)

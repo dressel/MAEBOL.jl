@@ -39,18 +39,11 @@ initial_belief(m::SearchDomain) = ones(m.num_cells, m.num_cells) / (m.num_cells 
 
 
 """
-`update_belief(m, x, b, a)`
+`update_belief(m::SearchDomain, X::VehicleSet, Z::ObsSet)`
 
-Arguments:
-
-* `m` is search domain
-* `xp` is vehicle state
-* `o` is observation
-
-Returns an updated belief matrix.
+Modifies the `b` field of `m`.
 """
-function update_belief(m::SearchDomain, X::VehicleSet, Z::Vector{Obs})
-	bp = zeros(m.num_cells, m.num_cells)		# create bp
+function update_belief!(m::SearchDomain, X::VehicleSet, Z::ObsSet)
 
 	# Loop over all possible jammer positions
 	bp_sum = 0.0
@@ -68,11 +61,9 @@ function update_belief(m::SearchDomain, X::VehicleSet, Z::Vector{Obs})
 	# normalize
 	for theta_x = 1:m.num_cells
 		for theta_y = 1:m.num_cells
-			bp[theta_x, theta_y] /= bp_sum
+			m.b[theta_x, theta_y] /= bp_sum
 		end
 	end
-
-	return bp
 end
 
 # allows you to initialize vehicle set

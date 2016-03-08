@@ -7,10 +7,6 @@ This work is still in progress; this repo and documentation is really just for m
 ## Search Domain
 I use a `SearchDomain` type to characterize the search region in which the jammer might lie.
 
-## Observation Function
-```
-
-```
 
 ## Expected Information Density (EID)
 The expected information density (EID) is a distribution over the search domain that characterizes the informational value of being at a specific point in the domain.
@@ -27,6 +23,13 @@ D-optimality is often used to convert the EIM into EID: EID(x) = det(Phi(x))
 In order to perform ergodic control, the EID needs to be broken down into Fourier coefficients.
 
 `phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)` finds the `k`th coefficient of the EDI represented with `phi`.
+
+## Policies
+
+## Simulations
+```
+s = Simulation(m, X, p, 10)
+```
 
 ## Sources
 
