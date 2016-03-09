@@ -5,11 +5,11 @@ I use the ergodic control framework presented in [1] as well as that presented i
 This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work at all at any time.
 
 ## Installation and Use
-To install,
+To install, fire up Julia in the terminal and type
 ```
 Pkg.clone("https://github.com/dressel/MAEBOL.jl.git")
 ```
-To begin using,
+To begin using, type the following while in Julia
 ```
 using MAEBOL
 ```
@@ -19,7 +19,19 @@ using MAEBOL
 ### Search Domain
 I use a `SearchDomain` type to characterize the search region in which the jammer might lie.
 
+* `b`
+
+To createa default `SearchDomain`, do the following
+```
+m = SearchDomain(40)
+```
+
 ### Vehicle Set
+A `VehicleSet` is simply a vector of `Vehicle` types.
+The fields of vehicle are.
+
+* `x`
+* `y`
 
 ### Policy
 You can define your own policies.
