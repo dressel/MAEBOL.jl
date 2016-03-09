@@ -36,14 +36,33 @@ The fields of `Vehicle` are:
 * `y`
 
 ### Policy
-You can define your own policies.
+You can define your own policies. To do so, you must extend the abstract `Policy` class and implement `get_action`. For example, the following code defines a policy that always moves the vehicle north and east.
+```
+type NorthEastPolicy <: Policy
+end
+
+function get_action(m::SearchDomain, X::VehicleSet, p::NorthEastPolicy, t)
+	n = length(X)
+	A = Array(NTuple{2,Float64}, n)
+	for i = 1:n
+		A[i] = (0.5, 0.5)
+	end
+	return A
+end
+```
 
 ## Simulations
+```
+s = Simulation(m, X, p, 10)
+```
 
 ## Plotting
 Plotting is done using the PyPlot package, so this needs to be installed.
 
-## Expected Information Density (EID)
+## Ergodic Control
+This part describes important aspects of ergodic control and their implementation here.
+
+### Expected Information Density (EID)
 The expected information density (EID) is a distribution over the search domain that characterizes the informational value of being at a specific point in the domain.
 
 However, when we want to estimate a multivariable parameter, we have an expected information matrix (EIM).
@@ -54,16 +73,10 @@ D-optimality is often used to convert the EIM into EID: EID(x) = det(Phi(x))
 * `EID(m::SearchDomain, b::Belief)` generates EID matrix over domain.
 * `EID(m::SearchDomain, theta_x, theta_y)` finds EID at a specific jammer location.
 
-## Fourier Decomposition
+### Fourier Decomposition
 In order to perform ergodic control, the EID needs to be broken down into Fourier coefficients.
 
 `phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)` finds the `k`th coefficient of the EDI represented with `phi`.
-
-
-## Simulations
-```
-s = Simulation(m, X, p, 10)
-```
 
 ## Sources
 
