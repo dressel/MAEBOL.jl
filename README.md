@@ -17,24 +17,31 @@ using MAEBOL
 ## Main Types
 
 ### Search Domain
-I use a `SearchDomain` type to characterize the search region in which the jammer might lie.
+The `SearchDomain` type describes the search region in which the jammer lies.
 
-* `b`
+Some of the important fields are as follows:
+* `b` belief
+* `theta` is a tuple of ints describing jammer location. `(theta_x, theta_y)`.
 
-To createa default `SearchDomain`, do the following
+To create a default `SearchDomain`, do the following
 ```
 m = SearchDomain(40)
 ```
 
 ### Vehicle Set
 A `VehicleSet` is simply a vector of `Vehicle` types.
-The fields of vehicle are.
+The fields of `Vehicle` are:
 
 * `x`
 * `y`
 
 ### Policy
 You can define your own policies.
+
+## Simulations
+
+## Plotting
+Plotting is done using the PyPlot package, so this needs to be installed.
 
 ## Expected Information Density (EID)
 The expected information density (EID) is a distribution over the search domain that characterizes the informational value of being at a specific point in the domain.
