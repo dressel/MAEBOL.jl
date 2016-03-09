@@ -19,7 +19,7 @@ type SearchDomain
 		m.num_cells = num_cells
 		m.domain_size = num_cells
 		m.num_vehicles = 1
-		m.noise_sigma = 10.0
+		m.noise_sigma = 15.0
 		m.d = Normal(0, m.noise_sigma)
 		m.F = fisher(m)
 		m.b = ones(num_cells, num_cells) / (num_cells * num_cells)

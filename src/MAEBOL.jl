@@ -10,9 +10,9 @@ export Vehicle, VehicleSet
 export O, observe, true_bearing
 export fisher, EID
 export plot_world, plot_eid, plot_eid2, plot_eid3, meshgrid, plot_sim
-export h_ij, hk2, phik, fk
+export h_ij, hk2, update_phik!, phi_ij, fk
 export ErgodicManager
-export get_action, RandPolicy
+export get_action, RandPolicy, SMC
 export Simulation
 
 typealias Obs Int64

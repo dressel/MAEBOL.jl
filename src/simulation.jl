@@ -28,7 +28,7 @@ type Simulation
 		# t = 0
 		Z = observe(m, X)
 		update_belief!(m, X, Z)
-		A = get_action(m, X, p)
+		A = get_action(m, X, p, 1)
 
 		state_list[1] = deepcopy(X)
 		obs_list[1] = deepcopy(Z)
@@ -37,7 +37,7 @@ type Simulation
 			transition!(m, X, A)
 			Z = observe(m, X)
 			update_belief!(m, X, Z)
-			A = get_action(m, X, p)
+			A = get_action(m, X, p, t)
 
 			# Log it all...
 			state_list[t+1] = deepcopy(X)

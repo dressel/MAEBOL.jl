@@ -75,6 +75,10 @@ function EID(m::SearchDomain, b::Belief)
 	return eid
 end
 
+function EID(m::SearchDomain)
+	return EID(m, m.b)
+end
+
 """
 `EID(m::SearchDomain, theta_x::Int64, theta_y::Int64)`
 
