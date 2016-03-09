@@ -4,9 +4,25 @@ I use the ergodic control framework presented in [1] as well as that presented i
 
 This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work at all at any time.
 
-## Search Domain
+## Installation and Use
+To install,
+```
+Pkg.clone("https://github.com/dressel/MAEBOL.jl.git")
+```
+To begin using,
+```
+using MAEBOL
+```
+
+## Main Types
+
+### Search Domain
 I use a `SearchDomain` type to characterize the search region in which the jammer might lie.
 
+### Vehicle Set
+
+### Policy
+You can define your own policies.
 
 ## Expected Information Density (EID)
 The expected information density (EID) is a distribution over the search domain that characterizes the informational value of being at a specific point in the domain.
@@ -24,7 +40,6 @@ In order to perform ergodic control, the EID needs to be broken down into Fourie
 
 `phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)` finds the `k`th coefficient of the EDI represented with `phi`.
 
-## Policies
 
 ## Simulations
 ```
