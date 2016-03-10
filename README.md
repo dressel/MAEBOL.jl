@@ -2,7 +2,7 @@
 Here I consider searching for a single, stationary jammer using multiple vehicles with a bearing-only sensing modality.
 I use the ergodic control framework presented in [1] as well as that presented in [2],[3].
 
-This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work at all at any time.
+This work is still in progress; this repo and documentation is really just for myself; nothing is guaranteed to work.
 
 ## Installation and Use
 To install, fire up Julia in the terminal and type
@@ -60,7 +60,7 @@ s = Simulation(m, X, p, 10)
 Plotting is done using the PyPlot package, so this needs to be installed.
 
 ## Ergodic Control
-This part describes important aspects of ergodic control and their implementation here.
+This section describes important aspects of ergodic control and their implementation here.
 
 ### Expected Information Density (EID)
 The expected information density (EID) is a distribution over the search domain that characterizes the informational value of being at a specific point in the domain.
@@ -77,6 +77,22 @@ D-optimality is often used to convert the EIM into EID: EID(x) = det(Phi(x))
 In order to perform ergodic control, the EID needs to be broken down into Fourier coefficients.
 
 `phik(m::SearchDomain, phi::Matrix{Float64}, k::Int)` finds the `k`th coefficient of the EDI represented with `phi`.
+
+### Ergodic Manager
+The `ErgodicManager` type contains many of the important functions needed to perform ergodic control.
+An `ErgodicManager` can be instantiated with a `SearchDomain` `m` and a number of Fourier coefficients `K`.
+```
+em = ErgodicManager(m, K)
+```
+Some fields
+* K::Int
+* L::Int
+* Gamma::Matrix{Float64}
+* h::Matrix{Float64}
+* phi::Matrix{Float64}
+* phik::Matrix{Float64}
+* ck::Matrix{Float64}
+* F
 
 ## Sources
 
