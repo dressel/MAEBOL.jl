@@ -8,7 +8,7 @@
 
 Creates the Fisher information matrix. Vehicle positions are discretized to same level as possible jammer locations.
 """
-function fisher(m::SearchDomain)
+function fisher2(m::SearchDomain)
 	# TODO: multiply by measurement noise
 	# TODO: what do we do about rad2deg business? Multiply by constant?
 	# TODO: what do we do about xr = yr = 0??
@@ -31,6 +31,40 @@ function fisher(m::SearchDomain)
 					F[vx,vy,theta_x,theta_y,2,2] = 2*yr*xr / den
 					F[vx,vy,theta_x,theta_y,1,2] = (xr^2 - yr^2) / den
 					F[vx,vy,theta_x,theta_y,2,1] = (xr^2 - yr^2) / den
+				end
+			end
+		end
+	end
+	return F
+end
+
+function fisher(m::SearchDomain)
+	# TODO: multiply by measurement noise
+	# TODO: what do we do about rad2deg business? Multiply by constant?
+	# TODO: what do we do about xr = yr = 0??
+	n = m.num_cells
+	F = zeros(n, n, n, n, 2, 2)
+
+	for vx = 1:n
+		for vy = 1:n
+			for theta_x = 1:n
+				for theta_y = 1:n
+					# compute phi
+					# Create the 2x2 matrix
+					xr = theta_x - vx
+					yr = theta_y - vy
+					if xr == 0 && yr == 0
+						xr = 1e-6
+						yr = 1e-6
+					end
+
+					alpha = atan2(xr, yr)
+					den = (xr^2 + yr^2)
+
+					F[vx,vy,theta_x,theta_y,1,1] = cos(alpha)^2 / den
+					F[vx,vy,theta_x,theta_y,2,2] = sin(alpha)^2 / den
+					F[vx,vy,theta_x,theta_y,1,2] = -sin(2*alpha) / (2*den)
+					F[vx,vy,theta_x,theta_y,2,1] = -sin(2*alpha) / (2*den)
 				end
 			end
 		end

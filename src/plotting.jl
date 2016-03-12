@@ -28,16 +28,23 @@ function plot_sim(m::SearchDomain, s::Simulation)
 	end
 end
 
-function plot_eid(m, b, x, theta)
+function plot_eid(m::SearchDomain, X::VehicleSet)
+	plot_eid(m, m.b, X::VehicleSet, m.theta)
+end
+
+function plot_eid(m::SearchDomain, b::Belief, X::VehicleSet, theta)
 	mark_size = 12
 	eid = EID(m,b)
-	plot(x[1], x[2], "b*", markersize=mark_size)
+	#plot(x[1], x[2], "b*", markersize=mark_size)
 	plot(theta[1], theta[2], "r^", markersize=mark_size)
 	imshow(eid', interpolation="none", cmap="Greys", origin="lower")
 	plot_contour(m, eid)
 	xlabel("x")
 	ylabel("y")
 	#imshow(b_plot, cmap="Greys")
+	for xi in X
+		plot(xi.x, xi.y, "b*", markersize=mark_size)
+	end
 end
 
 function plot_eid2(m, b, x, theta)

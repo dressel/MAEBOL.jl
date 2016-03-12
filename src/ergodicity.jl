@@ -7,6 +7,7 @@
 # Gamma		constant weights
 # h			constant normalizing weights
 # phik		Fourier coefficients for current EID
+# phi
 # ck
 type ErgodicManager
 	K::Int
@@ -118,7 +119,12 @@ function update_phik!(em::ErgodicManager)
 	K = em.K
 	for K1 = 0:K
 		for K2 = 0:K
-			em.phik[K1+1, K2+1] = phi_ij(em, K1, K2)
+			em.phik[K1+1, K2+1] = 0.0
+			for x = 1:em.L
+				for y = 1:em.L
+					em.phik[K1+1, K2+1] += em.phi[x,y]*fk(em,K1,K2,x,y)
+				end
+			end
 		end
 	end
 end
@@ -158,11 +164,6 @@ function Bj(em::ErgodicManager, x1, x2, N, t)
 		end
 	end
 	return bx,by
-end
-
-function uj(em::ErgodicManager, x1, x2, t)
-	bx, by = Bj(em, x1, x2, t)
-	bnorm = sqrt(bx*bx + by*by)
 end
 
 function update_phi!(em::ErgodicManager, b::Belief)
