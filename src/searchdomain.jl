@@ -32,6 +32,12 @@ type SearchDomain
 
 end
 
+# noise_sigma is in degrees
+function set_noise(m::SearchDomain, noise_sigma::Float64)
+	m.noise_sigma = noise_sigma
+	m.d = Normal(0, m.noise_sigma)
+end
+
 """
 `initial_belief(m::SearchDomain)`
 """

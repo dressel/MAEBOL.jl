@@ -29,6 +29,20 @@ function O(m::SearchDomain, x::Vehicle, theta, o::Obs)
 	return p
 end
 
+function O(m::SearchDomain, xv::Float64, yv::Float64, theta, o::Obs)
+
+	# Calculate true bearing, and find distance to bin edges
+	xp = (xv, yv)
+	ang_deg = true_bearing(xp, theta)
+	rel_start, rel_end = rel_bin_edges(ang_deg, o)
+
+	# now look at probability
+	#p = cdf(m.d, deg2rad(rel_end)) - cdf(m.d, deg2rad(rel_start))
+	p = cdf(m.d, rel_end) - cdf(m.d, rel_start)
+	return p
+end
+
+
 """
 `observe(m::SearchDomain, X::VehicleSet)`
 

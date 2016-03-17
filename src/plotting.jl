@@ -3,50 +3,100 @@
 # Handles all the calls to PyPlot to generate plots
 ######################################################################
 
-function plot_world(m::SearchDomain, X::VehicleSet)
-	plot_world(m.b, X, m.theta)
+"""
+`plot_b(m::SearchDomain, X::VehicleSet)`
+
+Plots the belief, jammer, and vehicles.
+"""
+function plot_b(m::SearchDomain, X::VehicleSet)
+	#hold(true)
+	#plot_b(m.b, X, m.theta)
+	plot_theta(m)
+	plot_vehicles(X)
+	imshow(m.b', interpolation="none", cmap="Greys", origin="lower")
+	labels()
 end
 
-function plot_world(b::Belief, X::VehicleSet, theta::NTuple{2,Int})
-	#figure()
-	mark_size = 12
-	plot(theta[1], theta[2], "r^", markersize=mark_size)
+# This is needed for plot_sim
+function plot_b(m::SearchDomain, b::Belief, X::VehicleSet)
+	plot_theta(m)
 	hold(true)
-	for xi in X
-		plot(xi.x, xi.y, "b*", markersize=mark_size)
-	end
+	plot_vehicles(X)
 	imshow(b', interpolation="none", cmap="Greys", origin="lower")
-	xlabel("x")
-	ylabel("y")
+	labels()
 end
 
+"""
+`plot_eid(m::SearchDomain, X::VehicleSet)`
+
+Plots the eid using the Fisher information matrix.
+"""
+function plot_eid(m::SearchDomain, X::VehicleSet)
+	eid = EID(m,m.b)
+	imshow(eid', interpolation="none", cmap="Greys", origin="lower")
+	plot_contour(m, eid)
+	plot_theta(m)
+	plot_vehicles(X)
+	labels()
+end
+
+"""
+`plot_mi(m::SearchDomain, X::VehicleSet)`
+
+Plots the mutual information.
+"""
+function plot_mi(m::SearchDomain, X::VehicleSet)
+	mut_info = mutual_information(m)
+	plot_vehicles(X)
+	imshow(mut_info', interpolation="none", cmap="Greys", origin="lower")
+end
+
+"""
+`plot_sim(m::SearchDomain, s::Simulation)`
+
+Steps through a simulation.
+"""
 function plot_sim(m::SearchDomain, s::Simulation)
 	for t = 0:s.T
 		hold(false)
 		pause(1)
-		plot_world(s.belief_list[t+1], s.state_list[t+1], m.theta)
+		plot_b(m, s.belief_list[t+1], s.state_list[t+1])
 	end
 end
 
-function plot_eid(m::SearchDomain, X::VehicleSet)
-	plot_eid(m, m.b, X::VehicleSet, m.theta)
-end
 
-function plot_eid(m::SearchDomain, b::Belief, X::VehicleSet, theta)
+######################################################################
+# Helper functions
+######################################################################
+# Plots locations of the vehicles
+function plot_vehicles(X::VehicleSet)
 	mark_size = 12
-	eid = EID(m,b)
-	#plot(x[1], x[2], "b*", markersize=mark_size)
-	plot(theta[1], theta[2], "r^", markersize=mark_size)
-	imshow(eid', interpolation="none", cmap="Greys", origin="lower")
-	plot_contour(m, eid)
-	xlabel("x")
-	ylabel("y")
-	#imshow(b_plot, cmap="Greys")
 	for xi in X
 		plot(xi.x, xi.y, "b*", markersize=mark_size)
 	end
 end
 
+# Plots jammer location
+function plot_theta(m::SearchDomain)
+	mark_size = 12
+	plot(m.theta[1], m.theta[2], "r^", markersize=mark_size)
+end
+
+# Plots contours of some distribution `d` (a matrix).
+function plot_contour(m::SearchDomain, d)
+	X,Y = meshgrid(0:m.num_cells-1, 0:m.num_cells-1)
+	contour(X, Y, d')
+end
+
+# Sets the appropriate plot labels
+function labels()
+	xlabel("x")
+	ylabel("y")
+end
+
+######################################################################
+# Old, deprecated, or unused
+######################################################################
 function plot_eid2(m, b, x, theta)
 	mark_size = 12
 	eid = EID(m,theta[1],theta[2])
@@ -88,14 +138,4 @@ function meshgrid(x, y)
 		end
 	end
 	return X, Y
-end
-
-"""
-`contour(m::SearchDomain, d)`
-
-Plots contours of some distribution `d` (a matrix).
-"""
-function plot_contour(m::SearchDomain, d)
-	X,Y = meshgrid(0:m.num_cells-1, 0:m.num_cells-1)
-	contour(X, Y, d')
 end

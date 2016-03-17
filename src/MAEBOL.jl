@@ -10,12 +10,14 @@ export SearchDomain, initial_belief, update_belief!, transition!
 export Vehicle, VehicleSet
 export O, observe, true_bearing
 export fisher, EID
-export plot_world, plot_eid, plot_eid2, plot_eid3, meshgrid, plot_sim
+export plot_b, plot_eid, plot_mi
+export plot_eid2, plot_eid3, meshgrid, plot_sim
 export h_ij, hk2, update_phik!, phi_ij, fk
 export ErgodicManager
 export get_action, RandPolicy, ConstantPolicy, SMC, SMC2, FisherGreedy
 export FisherGreedy2
 export Simulation
+export mutual_information
 
 typealias Obs Int64
 typealias Observation Obs
@@ -31,6 +33,7 @@ include("ergodicity.jl")
 include("eid.jl")
 include("policy.jl")
 include("simulation.jl")
+include("infotheoretic.jl")
 include("plotting.jl")
 
 # TODO: add checks for staying within

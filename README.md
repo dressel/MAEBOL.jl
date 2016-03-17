@@ -59,6 +59,17 @@ s = Simulation(m, X, p, 10)
 ## Plotting
 Plotting is done using the PyPlot package, so this needs to be installed.
 
+Below are the most common plotting functions
+```
+# m is a SearchDomain
+# X is a VehicleSet
+
+plot_b(m,X)			# Plots belief
+plot_eid(m,X)		# Plots expected information density (Fisher-based)
+plot_mi(m,X)		# Plots mutual information
+plot_sim(m,s)		# Plots results of simulation s
+```
+
 ## Ergodic Control
 This section describes important aspects of ergodic control and their implementation here.
 
